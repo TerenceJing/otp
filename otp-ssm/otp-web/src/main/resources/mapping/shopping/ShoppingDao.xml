@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.shopping.dao.ShoppingDao">
+    <!--添加商品到购物车-->
+    <insert id="addShoppingCartGood">
+        insert into
+        shopping_cart(id,user_id,good_id,good_name,good_price,num,good_image,create_time)
+        values(
+        nextval('S_shopping_cart_id'),
+        #{userId},
+        #{goodId},
+        #{goodName},
+        #{goodPrice,jdbcType=NUMERIC},
+        #{num},
+        #{goodImage},
+        #{createTime}
+        )
+    </insert>
+
+    <!--批量删除购物车中的商品-->
+    <delete id="bathDeleteShoppingCartGoods">
+        delete from  shopping_cart where id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--查询购物车中的商品列表-->
+    <select id="queryShoppingCartGoods" resultType="dao.shopping.entity.ShoppingCartGood">
+        select * from shopping_cart where user_id=#{userId}
+    </select>
+
+    <!--提交订单后生成订单-->
+    <insert id="addGoodOrder" >
+        insert into good_order(id,user_id,order_indexcode,good_id,good_name,
+        num,order_price,create_time,pay_time,deliver_time)
+        values(
+        nextval('S_good_order_id'),
+        #{userId},
+        #{orderIndexCode},
+        #{goodId},
+        #{goodName},
+        #{num},
+        #{orderPrice},
+        #{createTime},
+        #{payTime},
+        #{deliverTime}
+        )
+    </insert>
+    <!--批量删除订单-->
+    <delete id="bathDeleteGoodOrders" parameterType="list">
+        delete from  good_order where id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <!--根据用户批量查询订单-->
+    <select id="queryGoodOrder" resultType="dao.shopping.entity.GoodOrder">
+        select * from good_order where user_id=#{userId}
+    </select>
+</mapper>
+
+

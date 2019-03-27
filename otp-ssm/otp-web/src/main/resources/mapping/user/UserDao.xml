@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.user.dao.UserDao">
+
+    <resultMap id="UserResultMap" type="dao.user.entity.User">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_pwd" property="password" jdbcType="VARCHAR"/>
+        <result column="change_user_name" property="changeUserName" jdbcType="NUMERIC"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="NUMERIC"/>
+        <result column="birthday" property="birthday" jdbcType="TIMESTAMP"/>
+        <result column="image_data" property="imageData" jdbcType="CHAR"/>
+    </resultMap>
+    <resultMap id="AddressResultMap" type="dao.user.entity.Address">
+        <id column="id" property="id" jdbcType="NUMERIC"/>
+        <result column="user_id" property="userId" jdbcType="NUMERIC"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="phone_no" property="phoneNo" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="address_post_detail" property="addressPostDetail" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">id,user_name,user_pwd,change_user_name,nickname,sex,birthday,image_data</sql>
+
+    <!--检查账户名是否重复-->
+    <select id="checkUserByName" resultType="java.lang.Long" parameterType="java.lang.String">
+        select id from user_detail where user_name=#{userName,jdbcType=VARCHAR}
+    </select>
+    <!--注册账户-->
+    <insert id="addUser" parameterType="dao.user.entity.User">
+        insert into user_detail(id,user_name,user_pwd,change_user_name,nickname,sex,birthday,image_data )
+        values
+        (
+        nextval('S_user_detail_id'),
+        #{userName,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR},
+        #{changeUserName,jdbcType=NUMERIC},
+        #{nickname,jdbcType=VARCHAR},
+        #{sex,jdbcType=NUMERIC},
+        #{birthday,jdbcType=TIMESTAMP},
+        #{imageData,jdbcType=VARCHAR} )
+    </insert>
+    <update id="updateUser" parameterType="dao.user.entity.User">
+        update user_detail
+        <trim prefix="set" suffixOverrides=",">
+            <if test="password!=null">user_pwd=#{password},</if>
+            <if test="nickname!=null">nickname=#{nickname},</if>
+            <if test="sex!=null">sex=#{sex},</if>
+            <if test="birthday!=null">birthday=#{birthday},</if>
+            <if test="imageData!=null">image_data=#{imageData},</if>
+        </trim>
+        WHERE user_name=#{userName}
+    </update>
+    <!--根据账户名查询账户详情-->
+    <select id="queryUserDetailByName" resultMap="UserResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user_detail
+        where user_name=#{userName}
+    </select>
+
+    <!--根据账户Id添加地址-->
+    <insert id="addAddress" parameterType="dao.user.entity.Address">
+        insert into user_address(id,user_id,name,phone_no,province,city,address_post_detail)
+        values
+        (
+        nextval('S_user_address_id'),
+        #{userId,jdbcType=NUMERIC},
+        #{name,jdbcType=VARCHAR},
+        #{phoneNo,jdbcType=VARCHAR},
+        #{province,jdbcType=VARCHAR},
+        #{city,jdbcType=VARCHAR},
+        #{addressPostDetail,jdbcType=VARCHAR} )
+    </insert>
+
+    <select id="getAddressListByUserId"  resultType="dao.user.entity.Address" >
+        select id,user_id,name,phone_no,province,city,address_post_detail
+        from user_address
+        where user_id=#{userId}
+    </select>
+
+</mapper>

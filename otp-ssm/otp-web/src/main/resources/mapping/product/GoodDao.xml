@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.product.dao.GoodDao">
+
+    <insert id="addGoodCategory">
+        insert into good_category(id,category_name)
+        values(
+        nextval('S_good_category_id'),
+        #{categoryName}
+        )
+    </insert>
+    <select id="getGoodCategories" resultType="dao.product.entity.GoodCategoryDTO">
+        select * from good_category;
+    </select>
+    <select id="getGoods" resultType="dao.product.entity.GoodDetailDTO">
+        select * from good_detail;
+    </select>
+    <select id="getGoodsByKeyWords" resultType="dao.product.entity.GoodDetailDTO">
+        select * from good_detail where good_name like CONCAT('%',#{keyWords},'%')
+    </select>
+    <insert id="addGood">
+        insert into good_detail
+        (id,good_name,type,history_price,current_price,good_num,good_desc,image_url)
+        values(
+        nextval('S_good_detail_id'),
+        #{goodName},
+        #{type,jdbcType=NUMERIC},
+        #{historyPrice},
+        #{currentPrice},
+        #{goodNum},
+        #{goodDesc},
+        #{imageUrl}
+        )
+    </insert>
+
+</mapper>
