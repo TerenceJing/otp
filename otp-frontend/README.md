@@ -1,6 +1,6 @@
-# otp-view
+# otp-frontend
 
-> This is a vue project named otp-view.
+> This is a vue project named otp-frontend.
 
 ## Build Setup
 
